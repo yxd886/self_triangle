@@ -183,10 +183,16 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                 if(id=="-1"):
                     continue
                 else:
-                    time.sleep(2)
-                    if not api.is_order_complete(market3,id):
-                        api.cancel_order(market3,id)
-                        continue
+                    counter=0
+                    while not api.is_order_complete(market3,id):
+                        counter+=1
+                        time.sleep(0.1)
+                        if counter>40:
+                            api.cancel_order(market3,id)
+                            next_round = True
+                            break
+                if next_round:
+                    continue
                 api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
                 api.take_order(market2, "buy", market2_ask, max(market1_buy*coin_amount/market2_ask,min_size[market2]), coin_place)
 
@@ -198,10 +204,16 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                 if(id=="-1"):
                     continue
                 else:
-                    time.sleep(2)
-                    if not api.is_order_complete(market1,id):
-                        api.cancel_order(market1,id)
-                        continue
+                    counter=0
+                    while not api.is_order_complete(market1,id):
+                        counter+=1
+                        time.sleep(0.1)
+                        if counter>40:
+                            api.cancel_order(market1,id)
+                            next_round = True
+                            break
+                if next_round:
+                    continue
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
                 api.take_order(market2, "sell", market2_buy, max(market1_ask * coin_amount/market2_buy, min_size[market2]), coin_place)
             else:
