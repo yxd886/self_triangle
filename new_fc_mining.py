@@ -118,6 +118,33 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
     min_size = api.set_demical(base1, [base2,_coin])
     min_size = api.set_demical(base2, [_coin])
+
+    obj1 = api.get_depth(market1)
+    obj2 = api.get_depth(market2)
+    obj3 = api.get_depth(market3)
+
+    market1_ask = obj1["asks"][2 * 2]
+    market1_buy = obj1["bids"][2 * 2]
+
+    market2_ask = obj2["asks"][2 * 2]
+    market2_buy = obj2["bids"][2 * 2]
+
+    market3_ask = obj3["asks"][2 * 2]
+    market3_buy = obj3["bids"][2 * 2]
+
+    amount1 = market1_ask*min_size[market1]
+    amount2 = market2_ask*min_size[market2]
+    amount3 = market3_ask*min_size[market3]*market2_ask
+
+    if amount1==max(amount1,amount2,amount3):
+        amount = min_size[market1]
+    if amount2==max(amount1,amount2,amount3):
+        amount = min_size[market2]
+    if amount3==max(amount1,amount2,amount3):
+        amount = min_size[market3]
+
+
+
     need_wait = True
     while True:
         try:
@@ -154,7 +181,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
             if ratio1>0.001:
                 need_wait = False
-                coin_amount = 10*min_size[market3]
+                coin_amount = amount*2
                 id=api.take_order(market3, "buy", real_ask,coin_amount, coin_place)
                 if(id=="-1"):
                     continue
@@ -175,7 +202,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
             elif ratio2>0.001:
                 need_wait = False
-                coin_amount = 10* min_size[market1]
+                coin_amount = amount*2
                 id=api.take_order(market1, "buy", market1_ask, coin_amount, coin_place)
                 if(id=="-1"):
                     continue
