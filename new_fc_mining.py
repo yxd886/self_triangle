@@ -345,7 +345,7 @@ if __name__ == '__main__':
 
 
     load_money = "usdt"
-    total_load_coin="xlm ada btc bch xrp ft ada dash bsv iota"
+    total_load_coin="trx etc xlm zec ada dash iota xrp ltc eos"
     load_coin = "trx etc xlm zec ada dash iota xrp ltc eos"
     load_parition="2"
     load_total_money="100"
