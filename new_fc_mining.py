@@ -125,14 +125,14 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
             obj2 = api.get_depth(market2)
             obj3 = api.get_depth(market3)
 
-            real_ask = obj3["asks"][1*2]
-            real_buy = obj3["bids"][1*2]
+            real_ask = obj3["asks"][2*2]
+            real_buy = obj3["bids"][2*2]
 
-            market1_ask = obj1["asks"][1*2]
-            market1_buy = obj1["bids"][1*2]
+            market1_ask = obj1["asks"][2*2]
+            market1_buy = obj1["bids"][2*2]
 
-            market2_ask = obj2["asks"][1*2]
-            market2_buy = obj2["bids"][1*2]
+            market2_ask = obj2["asks"][2*2]
+            market2_buy = obj2["bids"][2*2]
 
             hecheng_ask =market1_ask/market2_buy
             hecheng_buy = market1_buy/market2_ask
