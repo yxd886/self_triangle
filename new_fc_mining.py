@@ -187,7 +187,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                 if next_round:
                     continue
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
-                api.take_order(market2, "sell", market2_buy, max(real_buy * coin_amount/market2_buy, min_size[market2]), coin_place)
+                api.take_order(market2, "sell", market2_buy, max(market1_ask * coin_amount/market2_buy, min_size[market2]), coin_place)
 
         except Exception as err:
             print("err")
