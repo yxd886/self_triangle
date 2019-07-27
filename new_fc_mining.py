@@ -147,7 +147,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
             print("real_buy:%f"%real_buy)
             print("hecheng_ask:%f"%hecheng_ask)
             ratio2 = (real_buy-hecheng_ask)/hecheng_ask
-            print("Ratio2:%f" % ratio1)
+            print("Ratio2:%f" % ratio2)
             next_round = False
 
             if ratio1>0.001:
