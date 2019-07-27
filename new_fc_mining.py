@@ -118,9 +118,11 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
     min_size = api.set_demical(base1, [base2,_coin])
     min_size = api.set_demical(base2, [_coin])
+    need_wait = True
     while True:
         try:
-            time.sleep(5)
+            if need_wait:
+                time.sleep(5)
             obj1 = api.get_depth(market1)
             obj2 = api.get_depth(market2)
             obj3 = api.get_depth(market3)
@@ -151,6 +153,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
             next_round = False
 
             if ratio1>0.001:
+                need_wait = False
                 coin_amount = 10*min_size[market3]
                 id=api.take_order(market3, "buy", real_ask,coin_amount, coin_place)
                 if(id=="-1"):
@@ -171,6 +174,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
 
             elif ratio2>0.001:
+                need_wait = False
                 coin_amount = 10* min_size[market1]
                 id=api.take_order(market1, "buy", market1_ask, coin_amount, coin_place)
                 if(id=="-1"):
@@ -188,6 +192,8 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                     continue
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
                 api.take_order(market2, "sell", market2_buy, max(market1_ask * coin_amount/market2_buy, min_size[market2]), coin_place)
+            else:
+                need_wait=True
 
         except Exception as err:
             print("err")
