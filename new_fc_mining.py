@@ -132,16 +132,13 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
     market3_ask = obj3["asks"][2 * 2]
     market3_buy = obj3["bids"][2 * 2]
 
+    print(min_size[market2])
+
     amount1 = market1_ask*min_size[market1]
     amount2 = market2_ask*min_size[market2]
     amount3 = market3_ask*min_size[market3]*market2_ask
-
-    if amount1==max(amount1,amount2,amount3):
-        amount = min_size[market1]
-    if amount2==max(amount1,amount2,amount3):
-        amount = min_size[market2]
-    if amount3==max(amount1,amount2,amount3):
-        amount = min_size[market3]
+    print(amount1,amount2,amount3)
+    amount = max(amount1,amount2,amount3)/market1_ask
 
 
 
@@ -181,7 +178,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
             if ratio1>0.001:
                 need_wait = False
-                coin_amount = amount*2
+                coin_amount = amount
                 id=api.take_order(market3, "buy", real_ask,coin_amount, coin_place)
                 if(id=="-1"):
                     continue
@@ -202,7 +199,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
             elif ratio2>0.001:
                 need_wait = False
-                coin_amount = amount*2
+                coin_amount = amount
                 id=api.take_order(market1, "buy", market1_ask, coin_amount, coin_place)
                 if(id=="-1"):
                     continue
