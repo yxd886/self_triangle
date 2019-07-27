@@ -366,6 +366,7 @@ if __name__ == '__main__':
     load_bidirection="3"
     load_coin_place="1"
     processes =list()
+    '''
     with open(multi_config_file, "r") as f:
         local_thread=list()
         for line in f.readlines():
@@ -378,12 +379,14 @@ if __name__ == '__main__':
             local_thread.append(thread)
         for _th in local_thread:
             _th.join()
+    '''
     while True:
         with open(multi_config_file, "r") as f:
             for line in f.readlines():
                 apikey = line.split("#")[0]
                 apisecret = line.split("#")[1]
                 total_money = line.split("#")[2]
+                init_sell(apikey,apisecret,total_load_coin,load_money)
                 p1 = Process(target=tick, args=(
                     apikey, apisecret, load_money, load_coin, load_parition, total_money,
                     load_bidirection, load_coin_place))
