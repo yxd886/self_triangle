@@ -183,6 +183,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                 if(id=="-1"):
                     continue
                 else:
+                    time.sleep(2)
                     if not api.is_order_complete(market3,id):
                         api.cancel_order(market3,id)
                         continue
@@ -197,6 +198,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                 if(id=="-1"):
                     continue
                 else:
+                    time.sleep(2)
                     if not api.is_order_complete(market1,id):
                         api.cancel_order(market1,id)
                         continue
