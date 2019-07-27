@@ -148,7 +148,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
             print("hecheng_ask:%f"%hecheng_ask)
             ratio2 = (real_buy-hecheng_ask)/hecheng_ask
             print("Ratio2:%f" % ratio1)
-
+            next_round = False
 
             if ratio1>0.001:
                 coin_amount = 10*min_size[market3]
@@ -162,18 +162,11 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                         time.sleep(0.1)
                         if counter>40:
                             api.cancel_order(market3,id)
+                            next_round = True
                             break
-                id=api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
-                if(id=="-1"):
+                if next_round:
                     continue
-                else:
-                    counter = 0
-                    while not api.is_order_complete(market1,id):
-                        counter+=1
-                        time.sleep(0.1)
-                        if counter>40:
-                            api.cancel_order(market3,id)
-                            break
+                api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
                 api.take_order(market2, "buy", market2_ask, max(market1_buy*coin_amount/market2_ask,min_size[market2]), coin_place)
 
 
@@ -189,18 +182,11 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                         time.sleep(0.1)
                         if counter>40:
                             api.cancel_order(market1,id)
+                            next_round = True
                             break
-                id=api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
-                if(id=="-1"):
+                if next_round:
                     continue
-                else:
-                    counter=0
-                    while not api.is_order_complete(market3,id):
-                        counter+=1
-                        time.sleep(0.1)
-                        if counter>40:
-                            api.cancel_order(market3,id)
-                            break
+                api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
                 api.take_order(market2, "sell", market2_buy, max(real_buy * coin_amount/market2_buy, min_size[market2]), coin_place)
 
         except Exception as err:
