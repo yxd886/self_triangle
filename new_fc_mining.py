@@ -198,21 +198,12 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                         time.sleep(0.1)
                         if counter>40:
                             api.cancel_order(market3,id)
-                            next_round = True
                             break
-                if next_round:
-                    continue
-                coin_amount = coin_amount-transaction_fee*coin_amount
-                for i in range(50):
-                    money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
-                    print("coin:%f"%coin)
-                    print("coin_amount:%f"%coin_amount)
-                    if coin>coin_amount or isclose(coin,coin_amount):
-                        print("break")
-                        break
-                    time.sleep(0.5)
+                money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                coin_amount = coin
                 api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
-                api.take_order(market2, "buy", market2_ask, max(market1_buy*coin_amount/market2_ask,min_size[market2]), coin_place)
+                if (market1_buy*coin_amount/market2_ask)>=min_size[market2]:
+                    api.take_order(market2, "buy", market2_ask, (market1_buy*coin_amount/market2_ask), coin_place)
 
 
             elif ratio2>0.001:
@@ -228,20 +219,12 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                         time.sleep(0.1)
                         if counter>40:
                             api.cancel_order(market1,id)
-                            next_round = True
                             break
-                if next_round:
-                    continue
-                coin_amount = coin_amount - transaction_fee * coin_amount
-                for i in range(50):
-                    money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
-                    print("coin:%f"%coin)
-                    print("coin_amount:%f"%coin_amount)
-                    if coin>coin_amount or isclose(coin,coin_amount):
-                        break
-                    time.sleep(0.5)
+                money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                coin_amount = coin
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
-                api.take_order(market2, "sell", market2_buy, max(market1_ask * coin_amount/market2_buy, min_size[market2]), coin_place)
+                if (market1_ask * coin_amount/market2_buy)>min_size[market2]:
+                    api.take_order(market2, "sell", market2_buy,(market1_ask * coin_amount/market2_buy), coin_place)
             else:
                 need_wait=True
 
