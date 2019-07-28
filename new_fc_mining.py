@@ -105,11 +105,18 @@ def check_and_save():
         #f.write(msg1+"\n")
         #f.write(signature.decode())
     win.destroy()
-
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_have,coin_place):
     base1="usdt"
-    base2="eth"
+    base2=_money
+    transaction_fee = 0.0003
+
+    if base2=="btc":
+        step = 1
+    else:
+        step=5
 
 
     market1 = _coin + base1
@@ -134,6 +141,8 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
     print(min_size[market2])
 
+    print(api.price_decimal[market3])
+
     amount1 = market1_ask*min_size[market1]
     amount2 = market2_ask*min_size[market2]
     amount3 = market3_ask*min_size[market3]*market2_ask
@@ -151,8 +160,8 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
             obj2 = api.get_depth(market2)
             obj3 = api.get_depth(market3)
 
-            real_ask = obj3["asks"][5*2]
-            real_buy = obj3["bids"][5*2]
+            real_ask = obj3["asks"][step*2]
+            real_buy = obj3["bids"][step*2]
 
             market1_ask = obj1["asks"][2*2]
             market1_buy = obj1["bids"][2*2]
@@ -178,7 +187,7 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
 
             if ratio1>0.001:
                 need_wait = False
-                coin_amount = amount
+                coin_amount = amount*1.1
                 id=api.take_order(market3, "buy", real_ask,coin_amount, coin_place)
                 if(id=="-1"):
                     continue
@@ -193,13 +202,22 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                             break
                 if next_round:
                     continue
+                coin_amount = coin_amount-transaction_fee*coin_amount
+                for i in range(50):
+                    money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                    print("coin:%f"%coin)
+                    print("coin_amount:%f"%coin_amount)
+                    if coin>coin_amount or isclose(coin,coin_amount):
+                        print("break")
+                        break
+                    time.sleep(0.5)
                 api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
                 api.take_order(market2, "buy", market2_ask, max(market1_buy*coin_amount/market2_ask,min_size[market2]), coin_place)
 
 
             elif ratio2>0.001:
                 need_wait = False
-                coin_amount = amount
+                coin_amount = amount*1.1
                 id=api.take_order(market1, "buy", market1_ask, coin_amount, coin_place)
                 if(id=="-1"):
                     continue
@@ -214,6 +232,14 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
                             break
                 if next_round:
                     continue
+                coin_amount = coin_amount - transaction_fee * coin_amount
+                for i in range(50):
+                    money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                    print("coin:%f"%coin)
+                    print("coin_amount:%f"%coin_amount)
+                    if coin>coin_amount or isclose(coin,coin_amount):
+                        break
+                    time.sleep(0.5)
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
                 api.take_order(market2, "sell", market2_buy, max(market1_ask * coin_amount/market2_buy, min_size[market2]), coin_place)
             else:
@@ -278,7 +304,7 @@ def tick(load_access_key, load_access_secret, load_money, load_coin, load_pariti
             api.cancel_all_pending_order(market)
         print("cancel pending orders completed")
         for i, market in enumerate(markets):
-            time.sleep(0.1)
+            time.sleep(1)
             thread = threading.Thread(target=buy_main_body,args=(mutex2,api,bidirection,partition,_money,coins[i],min_size[market],money_have/len(markets),coin_place_list[i]))
             thread.setDaemon(True)
             thread.start()
@@ -358,9 +384,9 @@ if __name__ == '__main__':
     markets = list()
 
 
-    load_money = "usdt"
-    total_load_coin="trx etc xlm zec ada dash iota xrp ltc eos"
-    load_coin = "trx etc xlm zec ada dash iota xrp ltc eos"
+    #load_money = "usdt"
+    total_load_coin="trx etc xlm zec ada dash bsv iota eth bch xrp ltc eos"
+    load_coin = "trx"
     load_parition="2"
     load_total_money="100"
     load_bidirection="3"
@@ -385,7 +411,8 @@ if __name__ == '__main__':
             for line in f.readlines():
                 apikey = line.split("#")[0]
                 apisecret = line.split("#")[1]
-                total_money = line.split("#")[2]
+                load_money = line.split("#")[2]
+                total_money="1000"
                 init_sell(apikey,apisecret,total_load_coin,load_money)
                 p1 = Process(target=tick, args=(
                     apikey, apisecret, load_money, load_coin, load_parition, total_money,

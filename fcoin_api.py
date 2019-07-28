@@ -226,7 +226,7 @@ class fcoin_api:
     def get_two_float(self, price, n):
         f_str = str(price)
         if "e" in f_str:
-            f_str = "%f"%(price)
+            f_str = ("%."+str(n)+"f")%(price)
         f_str = str(f_str)  # f_str = '{}'.format(f_str) 也可以转换为字符串
         a, b, c = f_str.partition('.')
         c = (c + "0" * n)[:n]  # 如论传入的函数有几位小数，在字符串后面都添加n为小数0
@@ -236,9 +236,7 @@ class fcoin_api:
         while True:
             size = self.get_two_float(size,self.amount_decimal[market])
             price=self.get_two_float(price,self.price_decimal[market])
-            print(direction)
-            print(size)
-            print(price)
+            print(direction,market,"amount:",size,"price:",price)
             if direction == "buy":
                 obj = self._api.buy(symbol=market, price=price, amount=size,exchange=place)
             else:
