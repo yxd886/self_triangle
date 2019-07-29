@@ -197,7 +197,7 @@ def buy_main_body(api,base1,base2,_coin,coin_place):
                 coin_amount = amount*1.1
                 id=api.take_order(market3, "buy", real_ask,coin_amount, coin_place)
                 if(id=="-1"):
-                    continue
+                    pass
                 else:
                     counter=0
                     while not api.is_order_complete(market3,id):
@@ -218,7 +218,7 @@ def buy_main_body(api,base1,base2,_coin,coin_place):
                 coin_amount = amount*1.1
                 id=api.take_order(market1, "buy", market1_ask, coin_amount, coin_place)
                 if(id=="-1"):
-                    continue
+                    pass
                 else:
                     counter=0
                     while not api.is_order_complete(market1,id):
