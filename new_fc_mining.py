@@ -206,7 +206,7 @@ def buy_main_body(api,base1,base2,_coin,coin_place):
                         if counter>40:
                             api.cancel_order(market3,id)
                             break
-                money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                money, coin, freez_money, freez_coin = api.get_available_balance(base1, _coin)
                 coin_amount = coin
                 api.take_order(market1, "sell", market1_buy, coin_amount, coin_place)
                 if (market1_buy*coin_amount/market2_ask)>=min_size[market2]:
@@ -227,7 +227,7 @@ def buy_main_body(api,base1,base2,_coin,coin_place):
                         if counter>40:
                             api.cancel_order(market1,id)
                             break
-                money, coin, freez_money, freez_coin = api.get_available_balance(_money, _coin)
+                money, coin, freez_money, freez_coin = api.get_available_balance(base1, _coin)
                 coin_amount = coin
                 api.take_order(market3, "sell", real_buy, coin_amount, coin_place)
                 if (market1_ask * coin_amount/market2_buy)>min_size[market2]:
