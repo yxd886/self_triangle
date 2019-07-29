@@ -149,6 +149,15 @@ def buy_main_body(mutex2,api,bidirection,partition,_money,_coin,min_size,money_h
     print(amount1,amount2,amount3)
     amount = max(amount1,amount2,amount3)/market1_ask
 
+    money, coin, freez_money, freez_coin = api.get_available_balance(base1, base2)
+    money_amount = money/market2_ask
+    if (money_amount)/(money_amount+coin)>0.53:
+        need_buy_amount = money_amount-(money_amount+coin)/2
+        api.take_order(market2, "buy", market2_ask*1.05,need_buy_amount, coin_place)
+    elif (coin)/(money_amount+coin)>0.53:
+        need_sell_amount = coin-(money_amount+coin)/2
+        api.take_order(market2, "sell", market2_buy*0.95, need_sell_amount, coin_place)
+
 
 
     need_wait = True
